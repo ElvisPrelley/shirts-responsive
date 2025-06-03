@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Catálogo de Produtos + Cadastro via WhatsApp</title>
+  <meta charset="UTF-8">
+  <title>Catálogo de Produtos</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,14 +10,13 @@
       margin: 0;
       padding: 20px;
       text-align: center;
-      position: relative;
     }
 
     h1 {
       margin-bottom: 20px;
     }
 
-    .catalogo {
+    .catalogo, .carrinho {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -33,7 +31,6 @@
       width: 250px;
       padding: 15px;
       box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-      text-align: left;
     }
 
     .produto img {
@@ -58,7 +55,6 @@
       border-radius: 4px;
       cursor: pointer;
       margin-top: 10px;
-      transition: background-color 0.3s ease;
     }
 
     button:hover {
@@ -67,161 +63,15 @@
 
     #verCarrinho {
       margin-bottom: 30px;
-      position: relative;
-      z-index: 1300;
     }
 
-    /* Balão do carrinho */
-    #baloonCarrinho {
-      position: absolute;
-      top: 60px; /* abaixo do botão */
-      right: 20px;
-      width: 320px;
-      max-height: 400px;
-      overflow-y: auto;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      padding: 15px;
-      display: none;
-      z-index: 1200;
-      text-align: left;
+    .titulo-carrinho {
+      margin-top: 40px;
     }
-    #baloonCarrinho::before {
-      content: "";
-      position: absolute;
-      top: -10px;
-      right: 25px;
-      border-width: 0 10px 10px 10px;
-      border-style: solid;
-      border-color: transparent transparent white transparent;
-    }
-    #baloonCarrinho .titulo-carrinho {
-      margin-top: 0;
-      margin-bottom: 10px;
+
+    .total {
       font-size: 18px;
-      font-weight: bold;
-    }
-    #baloonCarrinho .total {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    #baloonCarrinho .produto {
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-    }
-    #baloonCarrinho button {
-      margin: 3px 5px 3px 0;
-      padding: 4px 8px;
-      font-size: 14px;
-    }
-    #baloonCarrinho button.remover {
-      background-color: #dc3545;
-      color: white;
-    }
-    #baloonCarrinho button.remover:hover {
-      background-color: #b02a37;
-    }
-
-    /* Botão fixo cadastro cliente */
-    #btnCadastro {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #25d366;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 28px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-    #btnCadastro:hover {
-      background-color: #1ebe57;
-    }
-
-    /* Modal do formulário */
-    #modalCadastro {
-      display: none;
-      position: fixed;
-      z-index: 1100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
-      align-items: center;
-      justify-content: center;
-    }
-
-    #modalConteudo {
-      background-color: white;
-      margin: auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.25);
-      position: relative;
-      text-align: left;
-    }
-
-    #modalConteudo h2 {
-      margin-top: 0;
-      text-align: center;
-    }
-
-    #modalConteudo label {
-      display: block;
-      margin-top: 15px;
-    }
-
-    #modalConteudo input,
-    #modalConteudo textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    #modalConteudo button {
-      width: 100%;
       margin-top: 20px;
-      padding: 12px;
-      background-color: #25d366;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    #modalConteudo button:hover {
-      background-color: #1ebe57;
-    }
-
-    /* Botão fechar modal */
-    #fecharModal {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #999;
-      cursor: pointer;
-    }
-
-    #fecharModal:hover {
-      color: #333;
     }
   </style>
 </head>
@@ -229,42 +79,13 @@
 
   <h1>Catálogo de Produtos</h1>
 
-  <button id="verCarrinho" type="button">Ver Carrinho</button>
+  <button id="verCarrinho" onclick="mostrarCarrinho()">Ver Carrinho</button>
 
   <div class="catalogo" id="catalogo"></div>
 
-  <!-- Balão do carrinho -->
-  <div id="baloonCarrinho" role="region" aria-label="Itens no Carrinho">
-    <h2 class="titulo-carrinho">Itens no Carrinho</h2>
-    <div class="carrinho" id="carrinho"></div>
-    <div class="total" id="total"></div>
-  </div>
-
-  <!-- Botão fixo cadastro cliente -->
-  <button id="btnCadastro" title="Cadastrar Cliente">+</button>
-
-  <!-- Modal cadastro cliente -->
-  <div id="modalCadastro">
-    <div id="modalConteudo">
-      <span id="fecharModal" role="button" aria-label="Fechar">&times;</span>
-      <h2>Cadastro de Cliente</h2>
-      <form id="cadastroForm">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" required />
-
-        <label for="email">E-mail:</label>
-        <input type="email" id="email" required />
-
-        <label for="telefone">Telefone:</label>
-        <input type="tel" id="telefone" required />
-
-        <label for="obs">Observações:</label>
-        <textarea id="obs" rows="3"></textarea>
-
-        <button type="submit">Cadastrar</button>
-      </form>
-    </div>
-  </div>
+  <h2 class="titulo-carrinho">Itens no Carrinho</h2>
+  <div class="carrinho" id="carrinho"></div>
+  <div class="total" id="total"></div>
 
   <script>
     // Produtos disponíveis
@@ -293,6 +114,8 @@
     ];
 
     const catalogo = document.getElementById('catalogo');
+    const carrinhoDiv = document.getElementById('carrinho');
+    const totalDiv = document.getElementById('total');
 
     // Renderiza os produtos do catálogo
     produtos.forEach(produto => {
@@ -312,6 +135,7 @@
     function comprar(produto) {
       let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
+      // Verifica se o produto já está no carrinho
       const itemExistente = carrinho.find(item => item.id === produto.id);
 
       if (itemExistente) {
@@ -324,7 +148,7 @@
       alert(`"${produto.nome}" adicionado ao carrinho!`);
     }
 
-    // Remover item do carrinho
+    // Função para remover um item do carrinho
     function removerItem(id) {
       let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
       carrinho = carrinho.filter(item => item.id !== id);
@@ -332,72 +156,7 @@
       mostrarCarrinho();
     }
 
-    // Aumentar quantidade
-    function aumentarQuantidade(id) {
-      let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-      const item = carrinho.find(prod => prod.id === id);
-      if (item) {
-        item.quantidade++;
-        localStorage.setItem('carrinho', JSON.stringify(carrinho));
-        mostrarCarrinho();
-      }
-    }
-
-    // Diminuir quantidade
-    function diminuirQuantidade(id) {
-      let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-      const item = carrinho.find(prod => prod.id === id);
-      if (item && item.quantidade > 1) {
-        item.quantidade--;
-      } else {
-        carrinho = carrinho.filter(prod => prod.id !== id);
-      }
-      localStorage.setItem('carrinho', JSON.stringify(carrinho));
-      mostrarCarrinho();
-    }
-
-    // Finalizar compra (simulado)
-    function finalizarCompra() {
-      const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-
-      if (carrinho.length === 0) {
-        alert("Seu carrinho está vazio.");
-        return;
-      }
-
-      alert("Compra finalizada com sucesso!\nObrigado pela sua compra ❤️");
-
-      localStorage.removeItem('carrinho');
-      mostrarCarrinho();
-      baloonCarrinho.style.display = 'none';
-    }
-
-    // Mostrar carrinho no balão
-    const verCarrinhoBtn = document.getElementById('verCarrinho');
-    const baloonCarrinho = document.getElementById('baloonCarrinho');
-    const carrinhoDiv = document.getElementById('carrinho');
-    const totalDiv = document.getElementById('total');
-
-    verCarrinhoBtn.addEventListener('click', () => {
-      if (baloonCarrinho.style.display === 'block') {
-        baloonCarrinho.style.display = 'none';
-      } else {
-        mostrarCarrinho();
-        baloonCarrinho.style.display = 'block';
-      }
-    });
-
-    // Fecha o balão se clicar fora dele e do botão
-    window.addEventListener('click', (e) => {
-      if (
-        e.target !== baloonCarrinho &&
-        !baloonCarrinho.contains(e.target) &&
-        e.target !== verCarrinhoBtn
-      ) {
-        baloonCarrinho.style.display = 'none';
-      }
-    });
-
+    // Função para mostrar o carrinho na tela
     function mostrarCarrinho() {
       carrinhoDiv.innerHTML = '';
       totalDiv.innerHTML = '';
@@ -416,79 +175,71 @@
         const item = document.createElement('div');
         item.className = 'produto';
         item.innerHTML = `
-          <img src="${produto.imagem}" alt="${produto.nome}" style="width:60px; height:auto; float:left; margin-right:10px; border-radius:4px;">
-          <div style="overflow:hidden;">
-            <h4 style="margin:0 0 5px 0;">${produto.nome}</h4>
-            <p style="margin:0;">Quantidade: ${produto.quantidade}</p>
-            <p style="margin:0;"><strong>R$ ${produto.preco.toFixed(2)}</strong></p>
-            <button onclick="aumentarQuantidade(${produto.id})">+</button>
-            <button onclick="diminuirQuantidade(${produto.id})">-</button>
-            <button class="remover" onclick="removerItem(${produto.id})">Remover</button>
-          </div>
-          <div style="clear:both;"></div>
+          <img src="${produto.imagem}" alt="${produto.nome}">
+          <h3>${produto.nome}</h3>
+          <p>${produto.descricao}</p>
+          <p><strong>R$ ${produto.preco.toFixed(2)}</strong> x ${produto.quantidade}</p>
+          <p>Total: R$ ${(produto.preco * produto.quantidade).toFixed(2)}</p>
+          <button onclick="removerItem(${produto.id})">Remover</button>
         `;
         carrinhoDiv.appendChild(item);
       });
 
-      totalDiv.innerHTML = `
-        <strong>Total do Carrinho: R$ ${total.toFixed(2)}</strong><br><br>
-        <button onclick="finalizarCompra()">Finalizar Compra</button>
-      `;
+      totalDiv.innerHTML = `<strong>Total do Carrinho: R$ ${total.toFixed(2)}</strong>`;
     }
 
-    // Cadastro cliente via WhatsApp
+    function mostrarCarrinho() {
+  carrinhoDiv.innerHTML = '';
+  totalDiv.innerHTML = '';
+  const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
-    const btnCadastro = document.getElementById('btnCadastro');
-    const modalCadastro = document.getElementById('modalCadastro');
-    const fecharModal = document.getElementById('fecharModal');
-    const cadastroForm = document.getElementById('cadastroForm');
+  if (carrinho.length === 0) {
+    carrinhoDiv.innerHTML = "<p>Seu carrinho está vazio.</p>";
+    return;
+  }
 
-    btnCadastro.addEventListener('click', () => {
-      modalCadastro.style.display = 'flex';
-    });
+  let total = 0;
 
-    fecharModal.addEventListener('click', () => {
-      modalCadastro.style.display = 'none';
-    });
+  carrinho.forEach(produto => {
+    total += produto.preco * produto.quantidade;
 
-    window.addEventListener('click', (e) => {
-      if (e.target === modalCadastro) {
-        modalCadastro.style.display = 'none';
-      }
-    });
+    const item = document.createElement('div');
+    item.className = 'produto';
+    item.innerHTML = `
+      <img src="${produto.imagem}" alt="${produto.nome}">
+      <h3>${produto.nome}</h3>
+      <p>${produto.descricao}</p>
+      <p><strong>R$ ${produto.preco.toFixed(2)}</strong></p>
+      <p>Quantidade: ${produto.quantidade}</p>
+      <button onclick="aumentarQuantidade(${produto.id})">+</button>
+      <button onclick="diminuirQuantidade(${produto.id})">-</button>
+      <button onclick="removerItem(${produto.id})">Remover</button>
+    `;
+    carrinhoDiv.appendChild(item);
+  });
 
-    cadastroForm.addEventListener('submit', e => {
-      e.preventDefault();
+  totalDiv.innerHTML = `
+    <strong>Total do Carrinho: R$ ${total.toFixed(2)}</strong><br><br>
+    <button onclick="finalizarCompra()">Finalizar Compra</button>
+  `;
+}
 
-      const nome = document.getElementById('nome').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const telefone = document.getElementById('telefone').value.trim();
-      const obs = document.getElementById('obs').value.trim();
+function finalizarCompra() {
+  const carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
 
-      if (!nome || !email || !telefone) {
-        alert("Por favor, preencha todos os campos obrigatórios.");
-        return;
-      }
+  if (carrinho.length === 0) {
+    alert("Seu carrinho está vazio.");
+    return;
+  }
 
-      // Cria a mensagem para WhatsApp
-      const mensagem = 
-        `*Cadastro de Cliente*\n` +
-        `*Nome:* ${nome}\n` +
-        `*E-mail:* ${email}\n` +
-        `*Telefone:* ${telefone}\n` +
-        `*Observações:* ${obs || '-'}`;
+  // Aqui você pode redirecionar para um link de pagamento real
+  // Por enquanto, apenas simula:
+  alert("Compra finalizada com sucesso!\nObrigado pela sua compra ❤️");
 
-      // Número do WhatsApp do vendedor (coloque o seu número com código do país, sem espaços)
-      const numeroVendedor = '5511999999999';
-
-      const urlWhatsapp = `https://wa.me/${numeroVendedor}?text=${encodeURIComponent(mensagem)}`;
-
-      // Abre o WhatsApp com a mensagem pronta para enviar
-      window.open(urlWhatsapp, '_blank');
-
-      cadastroForm.reset();
-      modalCadastro.style.display = 'none';
-    });
+  // Limpa o carrinho
+  localStorage.removeItem('carrinho');
+  mostrarCarrinho();
+}
   </script>
 
 </body>
